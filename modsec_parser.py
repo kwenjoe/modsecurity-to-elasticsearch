@@ -57,7 +57,7 @@ def parseLogFile(file):
 	d = renameKeys(json.load(open(file)))
 
 	# create a unixts field as a timestamp field
-	d['transaction']['unixts'] = int(d['transaction']['id'][0:14].replace('.',''))
+	d['transaction']['unixts'] = int(d['transaction']['unique_id'][0:14].replace('.',''))
 
 	# create 1 index per day... you could change it
 	# if you need to store all logs in a single index:
@@ -112,7 +112,7 @@ def parseLogFile(file):
 	res = es.index(index=index, doc_type="modsecurity", body=d['transaction'])
 
 	# check if log has been created
-	if res['created'] is True:
+	if res['result'] == 'created':
 		os.remove(file)
 		print "Parsed "+str(file)
 	else:
@@ -122,7 +122,10 @@ while True:
 	for root, subFolders, files in os.walk(basedir):
 		for file in files:
 			logfile = os.path.join(root, file)
-			parseLogFile(file=logfile)
+			try:
+				parseLogFile(file=logfile)
+            except:                         
+                print "Error:" + logfile
 
 	print "Sleeping for a while..."
 	time.sleep(5)
