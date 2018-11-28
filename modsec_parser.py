@@ -124,8 +124,8 @@ while True:
 			logfile = os.path.join(root, file)
 			try:
 				parseLogFile(file=logfile)
-            except:                         
-                print "Error:" + logfile
+                        except:                         
+                                print "Error:" + logfile
 
 	print "Sleeping for a while..."
 	time.sleep(5)
